@@ -1,0 +1,13 @@
+﻿# Dependencias
+node_modules/
+
+# Variables de entorno: nunca se suben
+.env
+.env.*
+!.env.example
+
+# Sistema y editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
