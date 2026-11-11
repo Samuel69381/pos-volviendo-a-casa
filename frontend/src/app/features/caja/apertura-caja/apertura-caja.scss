@@ -298,3 +298,20 @@ textarea {
   height: 160px;
   object-fit: contain;
 }
+// =====================================
+// ERROR DEL SERVIDOR Y CARGANDO
+// =====================================
+
+.server-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-open:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}

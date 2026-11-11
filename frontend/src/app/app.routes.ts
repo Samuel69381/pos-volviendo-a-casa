@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 
 import {
@@ -6,10 +5,6 @@ import {
   invitadoGuard,
   sesionGuard
 } from './core/auth/auth.guards';
-
-import { MainLayout } from './shared/layout/main-layout/main-layout';
-
-import { AperturaCaja } from './features/caja/apertura-caja/apertura-caja';
 
 export const routes: Routes = [
 
@@ -31,19 +26,19 @@ export const routes: Routes = [
         .then(m => m.CambiarClave)
   },
 
-  // INICIO
+  // INICIO: por ahora lleva a la caja (luego será el panel principal)
   {
     path: 'inicio',
-    canActivate: [sesionGuard],
-    loadComponent: () =>
-      import('./features/inicio/inicio')
-        .then(m => m.Inicio)
+    redirectTo: 'caja',
+    pathMatch: 'full'
   },
 
   // MÓDULO DE CAJA
   {
     path: 'caja',
-    component: MainLayout,
+    loadComponent: () =>
+      import('./shared/layout/main-layout/main-layout')
+        .then(m => m.MainLayout),
     canActivate: [sesionGuard],
     children: [
       {
@@ -53,22 +48,11 @@ export const routes: Routes = [
       },
       {
         path: 'apertura',
-        component: AperturaCaja
+        loadComponent: () =>
+          import('./features/caja/apertura-caja/apertura-caja')
+            .then(m => m.AperturaCaja)
       }
     ]
   },
 
-  // RUTA PRINCIPAL
-  {
-    path: '',
-    redirectTo: 'inicio',
-    pathMatch: 'full'
-  },
-
-  // RUTA NO ENCONTRADA
-  {
-    path: '**',
-    redirectTo: 'inicio'
-  }
-
-];
+  //

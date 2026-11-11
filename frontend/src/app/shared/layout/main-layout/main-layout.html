@@ -57,10 +57,10 @@
     </nav>
 
     <div class="sidebar-bottom">
-      <div class="nav-item disabled">
-        <span class="nav-icon">↪</span>
+      <a href="" class="nav-item" (click)="$event.preventDefault(); cerrarSesion()">
+       <span class="nav-icon">↪</span>
         <span>Cerrar sesión</span>
-      </div>
+      </a>
     </div>
 
   </aside>
@@ -90,8 +90,8 @@
         <div class="user-avatar">👤</div>
 
         <div class="user-details">
-          <strong>{{ empleado }}</strong>
-          <span>{{ rol }}</span>
+          <strong>{{ empleado() }}</strong>
+          <span>{{ rol() }}</span>
         </div>
       </div>
 
