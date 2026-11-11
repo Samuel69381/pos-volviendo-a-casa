@@ -26,6 +26,8 @@ function responder(status: number, cuerpo: unknown): Response {
     headers: { ...CORS, 'Content-Type': 'application/json' },
   });
 }
+// Roles que el administrador puede asignar (deben existir en el tipo rol_usuario)
+const ROLES = ['admin', 'cajero', 'mesero'];
 
 function texto(valor: unknown): string {
   return String(valor ?? '').trim();
@@ -83,7 +85,7 @@ async function crearEmpleado(admin: SupabaseClient, adminId: string, b: Cuerpo):
   if (nombre.length < 5) return responder(400, { error: 'Escribe el nombre completo' });
   if (!RE_CEDULA.test(cedula)) return responder(400, { error: 'Cédula inválida: solo números, de 6 a 10 dígitos' });
   if (!RE_CELULAR.test(celular)) return responder(400, { error: 'Celular inválido: 10 dígitos que empiecen por 3' });
-  if (rol !== 'admin' && rol !== 'cajero') return responder(400, { error: 'El rol debe ser admin o cajero' });
+  if (!ROLES.includes(rol)) return responder(400, { error: 'El rol debe ser admin, cajero o mesero' });
   if (clave.length < CLAVE_MINIMA) {
     return responder(400, { error: `La contraseña temporal debe tener al menos ${CLAVE_MINIMA} caracteres` });
   }
