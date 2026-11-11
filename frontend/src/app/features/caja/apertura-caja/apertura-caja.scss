@@ -1,0 +1,300 @@
+:host {
+  display: block;
+}
+
+.page-container {
+  max-width: 1450px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.97);
+  padding: 22px;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 22px;
+
+  strong {
+    color: #111827;
+  }
+}
+
+.separator {
+  color: #94a3b8;
+  font-size: 20px;
+}
+
+.cash-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 17px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 32px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 16px;
+  }
+}
+
+.header-icon {
+  font-size: 40px;
+  color: #15803d;
+}
+
+.status-badge {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 40px;
+  padding: 13px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &.open {
+    background: #dcfce7;
+    color: #166534;
+  }
+}
+
+.card-content {
+  display: grid;
+  grid-template-columns: 35% 1fr;
+  gap: 35px;
+  padding: 30px;
+}
+
+.info-panel {
+  background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+  border-radius: 16px;
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  h3 {
+    font-size: 25px;
+    color: #111827;
+    margin: 20px 0 10px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #374151;
+    max-width: 280px;
+  }
+}
+
+.cash-illustration {
+  width: 160px;
+  height: 160px;
+  display: grid;
+  place-items: center;
+}
+
+.cash-machine {
+  font-size: 100px;
+}
+
+.cash-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 10px 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+  }
+}
+
+.required {
+  color: #dc2626;
+}
+
+.input-wrapper {
+  position: relative;
+
+  input {
+    width: 100%;
+    height: 60px;
+    padding: 0 18px 0 52px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    outline: none;
+    font-size: 17px;
+    color: #111827;
+    background: white;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #15803d;
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+    }
+  }
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+textarea {
+  width: 100%;
+  min-height: 145px;
+  padding: 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #15803d;
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+  }
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.info-message {
+  padding: 13px 16px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 5px;
+
+  button {
+    border-radius: 11px;
+    padding: 17px 26px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+}
+
+.btn-cancel {
+  background: white;
+  color: #166534;
+  border: 2px solid #15803d;
+
+  &:hover {
+    background: #f0fdf4;
+  }
+}
+
+.btn-open {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  border: none;
+
+  &:hover {
+    background: #166534;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 1050px) {
+  .card-content {
+    grid-template-columns: 1fr;
+  }
+
+  .info-panel {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 650px) {
+  .page-container {
+    padding: 12px;
+  }
+
+  .card-header {
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-title h2 {
+    font-size: 23px;
+  }
+
+  .header-title p {
+    font-size: 14px;
+  }
+
+  .card-content {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+.cash-register-img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+}

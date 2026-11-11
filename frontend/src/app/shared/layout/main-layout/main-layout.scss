@@ -1,0 +1,247 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f3f7f4;
+}
+
+.sidebar {
+  width: 270px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #064e3b, #022c22);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  z-index: 20;
+}
+
+.brand {
+  text-align: center;
+  padding: 35px 15px 30px;
+
+  .brand-icon {
+    font-size: 55px;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  p {
+    font-size: 15px;
+    margin-top: 8px;
+    color: #d1fae5;
+  }
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 25px 15px;
+}
+
+.sidebar-nav a,
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 18px;
+  border-radius: 10px;
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sidebar-nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav a.active {
+  background: #15803d;
+  color: white;
+  font-weight: 700;
+}
+
+.nav-icon {
+  width: 24px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 20px 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.main-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 90px;
+  background: linear-gradient(90deg, #166534, #064e3b);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 35px;
+  gap: 20px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.menu-toggle {
+  display: none;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.topbar-title {
+  h1 {
+    font-size: 27px;
+    margin: 0;
+    font-weight: 750;
+  }
+
+  p {
+    margin: 3px 0 0;
+    color: #d1fae5;
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: white;
+  color: #166534;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  strong {
+    font-size: 16px;
+  }
+
+  span {
+    color: #d1fae5;
+    font-size: 14px;
+  }
+}
+
+.content-area {
+  flex: 1;
+  padding: 30px;
+  background:
+    linear-gradient(
+      rgba(4, 35, 24, 0.60),
+      rgba(4, 35, 24, 0.70)
+    ),
+    url('/assets/cancha-futbol.jpg') center / cover no-repeat;
+}
+
+.mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .topbar {
+    padding: 0 20px;
+  }
+
+  .content-area {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 550px) {
+  .topbar-title h1 {
+    font-size: 19px;
+  }
+
+  .topbar-title p {
+    font-size: 12px;
+  }
+
+  .user-avatar {
+    display: none;
+  }
+
+  .user-details {
+    strong {
+      font-size: 13px;
+    }
+
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .content-area {
+    padding: 12px;
+  }
+}

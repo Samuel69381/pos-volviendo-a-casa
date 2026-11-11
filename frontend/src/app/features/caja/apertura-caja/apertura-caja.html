@@ -1,0 +1,138 @@
+<div class="page-container">
+
+  <div class="breadcrumb">
+    <span>Inicio</span>
+    <span class="separator">›</span>
+    <span>Caja</span>
+    <span class="separator">›</span>
+    <strong>Apertura de caja</strong>
+  </div>
+
+  <section class="cash-card">
+
+    <div class="card-header">
+
+      <div class="header-title">
+        <div class="header-icon">▣</div>
+
+        <div>
+          <h2>Apertura de caja</h2>
+          <p>
+            Inicia tu turno registrando el efectivo
+            disponible en la caja.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="status-badge"
+        [class.open]="cajaAbierta()">
+        <span>{{ cajaAbierta() ? '🔓' : '🔒' }}</span>
+        {{ cajaAbierta() ? 'Caja abierta' : 'Caja cerrada' }}
+      </div>
+
+    </div>
+
+    <div class="card-content">
+
+      <div class="info-panel">
+
+        <div class="cash-illustration">
+          <img
+            src="/assets/caja-registradora.png"
+             alt="Caja registradora"
+             class="cash-register-img"
+               />
+        </div>
+
+        <h3>Iniciar turno</h3>
+
+        <p>
+          Registra el monto inicial y, si es necesario,
+          agrega una observación.
+        </p>
+
+      </div>
+
+      <form
+        class="cash-form"
+        [formGroup]="aperturaForm"
+        (ngSubmit)="abrirCaja()"
+        novalidate>
+
+        <div class="form-group">
+
+          <label for="montoInicial">
+            Monto inicial en efectivo (COP)
+            <span class="required">*</span>
+          </label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">$</span>
+
+            <input
+              id="montoInicial"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="Ej. 150000"
+              formControlName="montoInicial">
+          </div>
+
+          @if (
+            aperturaForm.controls.montoInicial.invalid &&
+            aperturaForm.controls.montoInicial.touched
+          ) {
+            <small class="error-message">
+              Ingresa un monto válido igual o mayor a cero.
+            </small>
+          }
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="observaciones">
+            Observaciones (opcional)
+          </label>
+
+          <textarea
+            id="observaciones"
+            rows="5"
+            maxlength="500"
+            placeholder="Ej. Caja recibida sin novedades"
+            formControlName="observaciones">
+          </textarea>
+
+        </div>
+
+        @if (mensaje()) {
+          <div class="info-message">
+            {{ mensaje() }}
+          </div>
+        }
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cancelar()">
+            ✕ Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-open">
+            🔓 Abrir caja
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </section>
+
+</div>
