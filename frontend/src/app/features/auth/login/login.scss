@@ -340,3 +340,27 @@ input[type="password"]::-ms-clear {
   font-weight: 500;
   margin-top: 2px;
 }
+
+// =====================================
+// RESPUESTA DEL SERVIDOR Y CARGANDO
+// =====================================
+
+.server-error {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.form-hint {
+  color: $texto-secundario;
+  font-size: 13px;
+}
