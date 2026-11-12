@@ -1,0 +1,188 @@
+<div class="page-container">
+
+  <div class="breadcrumb">
+    <span>Inicio</span>
+    <span class="separator">›</span>
+    <span>Caja</span>
+    <span class="separator">›</span>
+    <strong>Apertura de caja</strong>
+  </div>
+
+  <section class="cash-card">
+
+    <div class="card-header">
+
+      <div class="header-title">
+        <div class="header-icon">▣</div>
+
+        <div>
+          <h2>Apertura de caja</h2>
+          <p>
+            Inicia tu turno registrando el efectivo
+            disponible en la caja.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="status-badge"
+        [class.open]="caja.abierta()">
+        <span>{{ caja.abierta() ? '🔓' : '🔒' }}</span>
+        {{ caja.abierta() ? 'Caja abierta' : 'Caja cerrada' }}
+      </div>
+
+    </div>
+
+    <div class="card-content">
+
+      <div class="info-panel">
+
+        <div class="cash-illustration">
+          <img
+            src="/assets/caja-registradora.png"
+            alt="Caja registradora"
+            class="cash-register-img"
+          />
+        </div>
+
+        <h3>Iniciar turno</h3>
+
+        <p>
+          Registra el monto inicial y, si es necesario,
+          agrega una observación.
+        </p>
+
+      </div>
+
+      <!-- El contenido cambia según el estado de la caja -->
+      @if (!caja.cargado()) {
+
+        <div class="cash-form">
+          @if (errorServidor()) {
+            <div class="server-error" role="alert">{{ errorServidor() }}</div>
+          } @else {
+            <div class="info-message">Consultando la caja…</div>
+          }
+        </div>
+
+      } @else if (caja.caja(); as abierta) {
+
+        <!-- CAJA ABIERTA -->
+        <div class="cash-form">
+          <div class="info-message">
+            Caja abierta desde las <strong>{{ abierta.abierta_en | date: 'h:mm a' }}</strong>
+            con una base de <strong>{{ cop(abierta.base_inicial_cop) }}</strong>.
+          </div>
+
+          @if (errorServidor()) {
+            <div class="server-error" role="alert">{{ errorServidor() }}</div>
+          }
+
+          @if (caja.turno(); as turno) {
+            <div class="info-message">
+              Estás en turno desde las <strong>{{ turno.inicio | date: 'h:mm a' }}</strong>.
+            </div>
+          } @else {
+            <div class="form-actions">
+              <button type="button" class="btn-open" [disabled]="cargando()" (click)="iniciarTurno()">
+                {{ cargando() ? 'Iniciando…' : '▶ Iniciar mi turno' }}
+              </button>
+            </div>
+          }
+        </div>
+
+      } @else if (!puedeAbrir()) {
+
+        <!-- CAJA CERRADA: el mesero no la puede abrir -->
+        <div class="cash-form">
+          <div class="info-message">
+            La caja está cerrada. Pídele al cajero que la abra para empezar a tomar pedidos.
+          </div>
+        </div>
+
+      } @else {
+
+        <!-- CAJA CERRADA: formulario de apertura -->
+        <form
+          class="cash-form"
+          [formGroup]="aperturaForm"
+          (ngSubmit)="abrirCaja()"
+          novalidate>
+
+          <div class="form-group">
+
+            <label for="montoInicial">
+              Monto inicial en efectivo (COP)
+              <span class="required">*</span>
+            </label>
+
+            <div class="input-wrapper">
+              <span class="input-icon">$</span>
+
+              <input
+                id="montoInicial"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="Ej. 150000"
+                formControlName="montoInicial">
+            </div>
+
+            @if (
+              aperturaForm.controls.montoInicial.invalid &&
+              aperturaForm.controls.montoInicial.touched
+            ) {
+              <small class="error-message">
+                Ingresa un monto válido igual o mayor a cero.
+              </small>
+            }
+
+          </div>
+
+          <div class="form-group">
+
+            <label for="observaciones">
+              Observaciones (opcional)
+            </label>
+
+            <textarea
+              id="observaciones"
+              rows="5"
+              maxlength="500"
+              placeholder="Ej. Caja recibida sin novedades"
+              formControlName="observaciones">
+            </textarea>
+
+          </div>
+
+          @if (errorServidor()) {
+            <div class="server-error" role="alert">{{ errorServidor() }}</div>
+          }
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="cancelar()">
+              ✕ Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="btn-open"
+              [disabled]="cargando()">
+              {{ cargando() ? 'Abriendo…' : '🔓 Abrir caja' }}
+            </button>
+
+          </div>
+
+        </form>
+
+      }
+
+    </div>
+
+  </section>
+
+</div>

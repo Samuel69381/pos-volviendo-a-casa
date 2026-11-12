@@ -1,0 +1,366 @@
+
+// =====================================
+// VARIABLES DE COLORES
+// =====================================
+
+$verde-oscuro: #064e3b;
+$verde-principal: #15803d;
+$verde-brillante: #16a34a;
+$blanco: #ffffff;
+$texto: #111827;
+$texto-secundario: #6b7280;
+$borde: #d1d5db;
+
+// =====================================
+// FONDO
+// =====================================
+
+.login-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 24px;
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      rgba(0, 35, 20, 0.35),
+      rgba(0, 35, 20, 0.55)
+    ),
+    url('/assets/cancha-futbol.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+// =====================================
+// TARJETA PRINCIPAL
+// =====================================
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+
+  background: $blanco;
+  border-radius: 24px;
+  overflow: hidden;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+// =====================================
+// ENCABEZADO VERDE
+// =====================================
+
+.login-header {
+  background: linear-gradient(
+    135deg,
+    $verde-principal,
+    $verde-oscuro
+  );
+
+  color: $blanco;
+  text-align: center;
+  padding: 36px 24px 40px;
+
+  .login-logo {
+    display: block;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin: 0 auto 12px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 8px 0 0;
+    font-size: 18px;
+    opacity: 0.9;
+  }
+}
+
+// =====================================
+// CONTENIDO
+// =====================================
+
+.login-content {
+  padding: 36px;
+
+  h2 {
+    margin: 0;
+    color: $texto;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .login-description {
+    text-align: center;
+    color: $texto-secundario;
+    margin: 8px 0 30px;
+    font-size: 14px;
+  }
+}
+
+// =====================================
+// CAMPOS DEL FORMULARIO
+// =====================================
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: $texto;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    height: 50px;
+    box-sizing: border-box;
+    padding: 0 16px;
+
+    border: 1px solid $borde;
+    border-radius: 12px;
+    background: $blanco;
+
+    font-family: inherit;
+    font-size: 15px;
+    color: $texto;
+
+    outline: none;
+
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+
+    &:focus {
+      border-color: $verde-principal;
+      box-shadow:
+        0 0 0 3px rgba(21, 128, 61, 0.12);
+    }
+  }
+}
+
+// =====================================
+// CONTENEDOR DE CONTRASEÑA
+// =====================================
+
+.password-container {
+  position: relative;
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding-right: 60px;
+  }
+}
+
+// =====================================
+// BOTÓN DEL OJO
+// =====================================
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+
+  color: $verde-principal;
+  cursor: pointer;
+  z-index: 2;
+
+  &:hover {
+    background: rgba(21, 128, 61, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $verde-principal;
+    outline-offset: 2px;
+  }
+
+  svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+  }
+}
+
+// =====================================
+// OCULTAR OJO NATIVO DE EDGE
+// =====================================
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+// =====================================
+// BOTÓN ENTRAR
+// =====================================
+
+.login-button {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 8px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    90deg,
+    $verde-oscuro,
+    $verde-brillante
+  );
+
+  color: $blanco;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: filter 0.2s;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $verde-principal;
+    outline-offset: 3px;
+  }
+}
+
+// =====================================
+// TEXTO DE AYUDA
+// =====================================
+
+.login-help {
+  margin: 24px 0 0;
+  color: $texto-secundario;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+// =====================================
+// RESPONSIVE PARA CELULARES
+// =====================================
+
+@media (max-width: 600px) {
+
+  .login-page {
+    padding: 16px;
+  }
+
+  .login-card {
+    max-width: 390px;
+    border-radius: 20px;
+  }
+
+  .login-header {
+    padding: 28px 20px 32px;
+
+    .login-logo {
+      width: 72px;
+      height: 72px;
+    }
+
+    h1 {
+      font-size: 25px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+
+  .login-content {
+    padding: 28px 22px;
+
+    h2 {
+      font-size: 23px;
+    }
+
+    .login-description {
+      font-size: 14px;
+    }
+  }
+
+  .form-group input {
+    height: 48px;
+  }
+
+  .login-button {
+    min-height: 48px;
+  }
+}
+
+.error-message {
+  display: block;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+// =====================================
+// RESPUESTA DEL SERVIDOR Y CARGANDO
+// =====================================
+
+.server-error {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.form-hint {
+  color: $texto-secundario;
+  font-size: 13px;
+}

@@ -1,0 +1,106 @@
+
+<div class="app-shell">
+
+  @if (menuAbierto()) {
+    <div
+      class="mobile-overlay"
+      (click)="cerrarMenu()">
+    </div>
+  }
+
+  <aside class="sidebar" [class.sidebar-open]="menuAbierto()">
+
+    <div class="brand">
+      <div class="brand-icon">⚽</div>
+      <h2>VOLVIENDO A CASA</h2>
+      <p>Punto de venta</p>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <a
+        routerLink="/inicio"
+        routerLinkActive="active"
+        (click)="cerrarMenu()">
+        <span class="nav-icon">⌂</span>
+        <span>Inicio</span>
+      </a>
+
+      <a
+        routerLink="/caja/apertura"
+        routerLinkActive="active"
+        (click)="cerrarMenu()">
+        <span class="nav-icon">▣</span>
+        <span>Caja</span>
+      </a>
+
+      <div class="nav-item disabled">
+        <span class="nav-icon">🛒</span>
+        <span>Ventas</span>
+      </div>
+
+      <div class="nav-item disabled">
+        <span class="nav-icon">▤</span>
+        <span>Pedidos</span>
+      </div>
+
+      <div class="nav-item disabled">
+        <span class="nav-icon">▥</span>
+        <span>Reportes</span>
+      </div>
+
+      <div class="nav-item disabled">
+        <span class="nav-icon">⚙</span>
+        <span>Configuración</span>
+      </div>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a href="" class="nav-item" (click)="$event.preventDefault(); cerrarSesion()">
+       <span class="nav-icon">↪</span>
+        <span>Cerrar sesión</span>
+      </a>
+    </div>
+
+  </aside>
+
+  <div class="main-area">
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button
+          type="button"
+          class="menu-toggle"
+          (click)="alternarMenu()"
+          aria-label="Abrir o cerrar menú">
+          ☰
+        </button>
+
+        <div class="topbar-title">
+          <h1>Volviendo a Casa</h1>
+          <p>Punto de venta</p>
+        </div>
+
+      </div>
+
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+
+        <div class="user-details">
+          <strong>{{ empleado() }}</strong>
+          <span>{{ rol() }}</span>
+        </div>
+      </div>
+
+    </header>
+
+    <main class="content-area">
+      <router-outlet />
+    </main>
+
+  </div>
+
+</div>

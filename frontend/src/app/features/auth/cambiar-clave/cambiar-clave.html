@@ -1,0 +1,49 @@
+<main class="login-page">
+  <section class="login-card">
+
+    <header class="login-header">
+      <h1>Crea tu contraseña</h1>
+      <p>Hola, {{ auth.perfil()?.nombre_completo }}</p>
+    </header>
+
+    <div class="login-content">
+      <p class="login-description">
+        Por seguridad, cambia la clave temporal que te dio el administrador.
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+        @if (errorServidor()) {
+          <p class="server-error" role="alert">{{ errorServidor() }}</p>
+        }
+
+        <div class="form-group">
+          <label for="nueva">Nueva contraseña</label>
+          <input id="nueva" type="password" formControlName="nueva" autocomplete="new-password" />
+          @if (form.controls.nueva.touched && form.controls.nueva.invalid) {
+            <small class="error-message">Mínimo 8 caracteres.</small>
+          } @else {
+            <small class="form-hint">Mínimo 8 caracteres.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="confirmar">Confirmar contraseña</label>
+          <input id="confirmar" type="password" formControlName="confirmar" autocomplete="new-password" />
+          @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
+            <small class="error-message">Las contraseñas no coinciden.</small>
+          }
+        </div>
+
+        <button type="submit" class="login-button" [disabled]="cargando()">
+          {{ cargando() ? 'Guardando…' : 'Guardar y continuar' }}
+        </button>
+      </form>
+
+      <p class="login-help">
+        <a href="" (click)="$event.preventDefault(); salir()">Salir</a>
+      </p>
+    </div>
+
+  </section>
+</main>
