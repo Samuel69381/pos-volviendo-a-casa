@@ -1,0 +1,125 @@
+/* EN TURNO */
+
+.status-dot.activo {
+  background: #4ade80;
+}
+
+/* VENTA REGISTRADA */
+
+.exito-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+
+  strong {
+    font-size: 16px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+}
+
+.exito-link {
+  margin-left: auto;
+  font-weight: 700;
+  color: #15803d;
+}
+
+/* CARRITO VACÍO */
+
+.carrito-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 30px 10px;
+  text-align: center;
+  color: #64748b;
+
+  strong {
+    font-size: 15px;
+    color: #1f2937;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+  }
+}
+
+.carrito-vacio-icono {
+  font-size: 34px;
+}
+
+.volver-btn {
+  margin-top: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #15803d;
+  color: #15803d;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* CUENTA DE LA TRANSFERENCIA */
+
+.cuenta-transferencia {
+  margin-top: 18px;
+
+  > span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+  }
+}
+
+.cuenta-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cuenta-opcion {
+  height: 44px;
+  border: 1px solid #dce6df;
+  border-radius: 10px;
+  background: white;
+  color: #475569;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &.selected {
+    border: 2px solid #15803d;
+    background: #f0fdf4;
+    color: #166534;
+  }
+}
+
+/* ERROR DEL SERVIDOR */
+
+.server-error {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.confirmar-btn:not(:disabled) {
+  cursor: pointer;
+}
