@@ -1,6 +1,11 @@
+
 :host {
   display: block;
   min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .app-shell {
@@ -9,101 +14,219 @@
   background: #f3f7f4;
 }
 
+/* ===================================
+   MENÚ LATERAL
+=================================== */
+
 .sidebar {
   width: 270px;
   flex-shrink: 0;
-  background: linear-gradient(180deg, #064e3b, #022c22);
-  color: white;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(6, 78, 59, 0.98) 0%,
+      rgba(3, 65, 45, 0.97) 55%,
+      rgba(2, 44, 34, 0.82) 100%
+    ),
+    url('/assets/cancha-futbol.jpg') center bottom / cover no-repeat;
+
+  color: #ffffff;
+
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  position: relative;
+
+  height: 100vh;
+  min-height: 0;
+
+  position: sticky;
+  top: 0;
   z-index: 20;
+
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4b8b70 transparent;
 }
+
+/* ===================================
+   LOGO Y NOMBRE
+=================================== */
 
 .brand {
   text-align: center;
-  padding: 35px 15px 30px;
+  padding: 26px 12px 20px;
 
   .brand-icon {
-    font-size: 55px;
-    margin-bottom: 10px;
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 12px;
   }
 
   h2 {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: 800;
     margin: 0;
+    color: white;
+    letter-spacing: -0.4px;
   }
 
   p {
-    font-size: 15px;
-    margin-top: 8px;
+    font-size: 13px;
+    margin: 7px 0 0;
     color: #d1fae5;
   }
 }
 
+/* ===================================
+   OPCIONES DEL MENÚ
+=================================== */
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 25px 15px;
+  gap: 4px;
+  padding: 14px 12px;
 }
 
 .sidebar-nav a,
-.nav-item {
+.sidebar-nav .nav-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px 18px;
+  gap: 13px;
+
+  min-height: 46px;
+  padding: 11px 13px;
+
   border-radius: 10px;
-  color: #e5e7eb;
+
+  color: #ecfdf5;
   text-decoration: none;
-  font-size: 16px;
+
+  font-size: 14px;
   font-weight: 500;
+  line-height: 1.3;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
-.sidebar-nav a:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
+/* OPCIÓN ACTIVA */
 
 .sidebar-nav a.active {
-  background: #15803d;
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  border: 1px solid rgba(187, 247, 208, 0.45);
   color: white;
   font-weight: 700;
 }
 
-.nav-icon {
-  width: 24px;
-  text-align: center;
-  font-size: 22px;
+/* HOVER */
+
+.sidebar-nav a:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.disabled {
-  opacity: 0.65;
+/* OPCIONES AÚN NO IMPLEMENTADAS */
+
+.sidebar-nav .nav-pending {
+  opacity: 0.88;
   cursor: default;
 }
 
+.sidebar-nav .nav-pending:hover {
+  background: transparent;
+}
+
+/* ===================================
+   ICONOS
+=================================== */
+
+.nav-icon {
+  width: 23px;
+  min-width: 23px;
+  height: 23px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.nav-icon svg {
+  width: 21px;
+  height: 21px;
+  display: block;
+  stroke: currentColor;
+}
+
+/* ===================================
+   SEPARADOR
+=================================== */
+
+.nav-divider {
+  height: 1px;
+  margin: 7px 10px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* ===================================
+   CERRAR SESIÓN
+=================================== */
+
 .sidebar-bottom {
   margin-top: auto;
-  padding: 20px 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
+
+.sidebar-bottom .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding: 13px;
+  border-radius: 10px;
+
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.sidebar-bottom .nav-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===================================
+   ÁREA PRINCIPAL
+=================================== */
 
 .main-area {
   flex: 1;
   min-width: 0;
+
   display: flex;
   flex-direction: column;
 }
 
+/* ===================================
+   BARRA SUPERIOR
+=================================== */
+
 .topbar {
   height: 90px;
+  min-height: 90px;
+
   background: linear-gradient(90deg, #166534, #064e3b);
   color: white;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   padding: 0 35px;
   gap: 20px;
 }
@@ -116,9 +239,11 @@
 
 .menu-toggle {
   display: none;
+
   border: none;
   background: transparent;
   color: white;
+
   font-size: 28px;
   cursor: pointer;
 }
@@ -136,6 +261,10 @@
   }
 }
 
+/* ===================================
+   INFORMACIÓN DEL EMPLEADO
+=================================== */
+
 .user-info {
   display: flex;
   align-items: center;
@@ -146,10 +275,13 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
+
   background: white;
   color: #166534;
+
   display: grid;
   place-items: center;
+
   font-size: 25px;
 }
 
@@ -168,9 +300,15 @@
   }
 }
 
+/* ===================================
+   CONTENIDO DE LAS PANTALLAS
+=================================== */
+
 .content-area {
   flex: 1;
+  min-width: 0;
   padding: 30px;
+
   background:
     linear-gradient(
       rgba(4, 35, 24, 0.60),
@@ -179,16 +317,27 @@
     url('/assets/cancha-futbol.jpg') center / cover no-repeat;
 }
 
+/* ===================================
+   OVERLAY MÓVIL
+=================================== */
+
 .mobile-overlay {
   display: none;
 }
+
+/* ===================================
+   TABLET
+=================================== */
 
 @media (max-width: 900px) {
   .sidebar {
     position: fixed;
     top: 0;
     left: 0;
+
     height: 100vh;
+    max-width: 85vw;
+
     transform: translateX(-100%);
     transition: transform 0.25s ease;
   }
@@ -201,6 +350,7 @@
     display: block;
     position: fixed;
     inset: 0;
+
     background: rgba(0, 0, 0, 0.5);
     z-index: 10;
   }
@@ -218,7 +368,20 @@
   }
 }
 
+/* ===================================
+   CELULARES
+=================================== */
+
 @media (max-width: 550px) {
+  .topbar {
+    gap: 10px;
+    padding: 0 14px;
+  }
+
+  .topbar-left {
+    gap: 12px;
+  }
+
   .topbar-title h1 {
     font-size: 19px;
   }

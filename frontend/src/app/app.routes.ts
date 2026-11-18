@@ -55,4 +55,17 @@ export const routes: Routes = [
     ]
   },
 
-  //
+  // RUTA PRINCIPAL
+  {
+    path: '',
+    redirectTo: 'caja',
+    pathMatch: 'full'
+  },
+
+  // RUTA NO ENCONTRADA
+  {
+    path: '**',
+    redirectTo: 'caja'
+  }
+
+];
