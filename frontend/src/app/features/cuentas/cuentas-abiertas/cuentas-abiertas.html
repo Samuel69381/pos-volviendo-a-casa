@@ -1,0 +1,213 @@
+<div class="cuentas-page">
+
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">PUNTO DE VENTA</span>
+      <h1>Cuentas abiertas</h1>
+      <p>Consulta los consumos pendientes de tus clientes.</p>
+    </div>
+    <button type="button" class="page-badge nueva-btn" (click)="abriendo.set(!abriendo())">
+      {{ abriendo() ? '× Cancelar' : '+ Abrir cuenta' }}
+    </button>
+  </header>
+
+  @if (mensaje()) {
+    <div class="aviso aviso-ok" role="status">{{ mensaje() }}</div>
+  }
+  @if (error()) {
+    <div class="aviso aviso-error" role="alert">{{ error() }}</div>
+  }
+
+  <!-- NUEVA CUENTA -->
+  @if (abriendo()) {
+    <section class="listado-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Abrir cuenta</h2>
+          <p>Escribe el encargado: el nombre de la cuenta será el suyo.</p>
+        </div>
+      </div>
+
+      <div class="form-fila">
+        <div class="campo-simple">
+          <label for="nuevoNombre">Nombre del encargado</label>
+          <input id="nuevoNombre" type="text" placeholder="Ej. Carlos Díaz"
+                 [value]="nuevoNombre()"
+                 (input)="nuevoNombre.set($any($event.target).value)" />
+        </div>
+        <div class="campo-simple">
+          <label for="nuevoCelular">Celular</label>
+          <input id="nuevoCelular" type="tel" inputmode="numeric" maxlength="10" placeholder="3001234567"
+                 [value]="nuevoCelular()"
+                 (input)="nuevoCelular.set($any($event.target).value)" />
+        </div>
+        <button type="button" class="accion-btn" [disabled]="procesando()" (click)="abrirCuenta()">
+          Abrir cuenta
+        </button>
+      </div>
+    </section>
+  }
+
+  <!-- RESUMEN -->
+  <div class="estadisticas">
+    <div class="estadistica-card">
+      <span>Cuentas activas</span>
+      <strong>{{ cuentas().length }}</strong>
+      <small>Actualmente abiertas</small>
+    </div>
+
+    <div class="estadistica-card">
+      <span>Total pendiente</span>
+      <strong class="valor-verde">
+        {{ formatoPrecio(totalPendiente()) }}
+      </strong>
+      <small>Saldo por cobrar</small>
+    </div>
+  </div>
+
+  <!-- LISTADO -->
+  <section class="listado-panel">
+    <div class="panel-heading">
+      <div>
+        <h2>Listado de cuentas</h2>
+        <p>Selecciona una cuenta para ver su detalle.</p>
+      </div>
+      <span class="contador">
+        {{ cuentasFiltradas().length }} resultados
+      </span>
+    </div>
+
+    <div class="buscador">
+      <span>⌕</span>
+      <input
+        type="search"
+        placeholder="Buscar equipo, encargado o celular..."
+        [value]="busqueda()"
+        (input)="busqueda.set($any($event.target).value)"
+      />
+    </div>
+
+    <div class="cuentas-grid">
+      @for (cuenta of cuentasFiltradas(); track cuenta.cuenta_id) {
+        <button
+          type="button"
+          class="cuenta-card"
+          [class.seleccionada]="cuentaSeleccionada()?.cuenta_id === cuenta.cuenta_id"
+          (click)="seleccionarCuenta(cuenta)">
+
+          <div class="cuenta-top">
+            <div class="cuenta-avatar">👥</div>
+            <span class="estado-cuenta">Abierta #{{ cuenta.numero_cuenta }}</span>
+          </div>
+
+          <h3>{{ cuenta.nombre_cuenta }}</h3>
+          <p class="referencia">{{ cuenta.encargado_nombre }} · {{ cuenta.encargado_celular }}</p>
+
+          <div class="cuenta-info">
+            <span>◷ {{ formatoHora(cuenta.abierta_en) }}</span>
+            <span>{{ cuenta.productos }} productos</span>
+          </div>
+
+          <div class="cuenta-footer">
+            <div>
+              <small>Saldo pendiente</small>
+              <strong>{{ formatoPrecio(cuenta.saldo_cop) }}</strong>
+            </div>
+            <span class="ver-detalle">Ver detalle →</span>
+          </div>
+
+        </button>
+      } @empty {
+        <div class="sin-cuentas">
+          <span>{{ cargando() ? '⏳' : '🔎' }}</span>
+          <h3>{{ cargando() ? 'Cargando cuentas…' : 'No se encontraron cuentas' }}</h3>
+          @if (!cargando()) {
+            <p>Prueba con otro nombre o abre una cuenta nueva.</p>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- DETALLE -->
+  @if (cuentaSeleccionada(); as cuenta) {
+    <section class="detalle-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Detalle de cuenta</h2>
+          <p>{{ cuenta.nombre_cuenta }} · {{ cuenta.encargado_nombre }} · {{ cuenta.encargado_celular }}</p>
+        </div>
+
+        <button
+          type="button"
+          class="cerrar-detalle"
+          (click)="cerrarDetalle()"
+          aria-label="Cerrar detalle">
+          ×
+        </button>
+      </div>
+
+      <div class="detalle-items">
+        @for (item of consumos(); track $index) {
+          <div class="detalle-fila">
+            <div>
+              <strong>{{ item.nombre }}</strong>
+              <span>
+                {{ item.cantidad }} × {{ formatoPrecio(item.precio) }}
+              </span>
+            </div>
+            <strong>
+              {{ formatoPrecio(item.cantidad * item.precio) }}
+            </strong>
+          </div>
+        } @empty {
+          <p class="detalle-nota">Esta cuenta aún no tiene pedidos.</p>
+        }
+      </div>
+
+      <div class="resumen-cuenta">
+        <div><span>Total consumido</span><strong>{{ formatoPrecio(cuenta.total_cop) }}</strong></div>
+        <div><span>Abonado</span><strong>{{ formatoPrecio(cuenta.pagado_cop) }}</strong></div>
+      </div>
+
+      <div class="detalle-total">
+        <span>Saldo pendiente</span>
+        <strong>{{ formatoPrecio(cuenta.saldo_cop) }}</strong>
+      </div>
+
+      @if (cuenta.saldo_cop > 0) {
+        <div class="pago-form">
+          <div class="campo-simple">
+            <label for="montoPago">Valor a pagar</label>
+            <input id="montoPago" type="number" min="0" [max]="cuenta.saldo_cop"
+                   placeholder="Ej. 20000"
+                   [value]="monto() ?? ''"
+                   (input)="monto.set($any($event.target).value ? +$any($event.target).value : null)" />
+          </div>
+
+          <div class="campo-simple">
+            <label for="medioPago">Medio de pago</label>
+            <select id="medioPago" [value]="medio()" (change)="medio.set($any($event.target).value)">
+              <option value="efectivo">Efectivo</option>
+              <option value="nequi">Nequi</option>
+              <option value="bancolombia">Bancolombia</option>
+            </select>
+          </div>
+
+          <button type="button" class="saldo-btn" (click)="pagarSaldoCompleto()">Todo el saldo</button>
+        </div>
+
+        <button type="button" class="cobrar-btn"
+                [disabled]="procesando() || !monto() || monto()! > cuenta.saldo_cop"
+                (click)="registrarPago()">
+          {{ procesando() ? 'Registrando…' : 'Registrar pago' }}
+        </button>
+      } @else {
+        <p class="detalle-nota">
+          Esta cuenta no tiene saldo. Agrega pedidos desde Vender → "Cargar a cuenta".
+        </p>
+      }
+    </section>
+  }
+
+</div>

@@ -1,0 +1,139 @@
+/* ===== AÑADIR AL FINAL DE cuentas-abiertas.scss ===== */
+
+.nueva-btn {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.aviso {
+  margin-bottom: 18px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.aviso-ok {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.aviso-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.form-fila,
+.pago-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+
+.pago-form {
+  margin-bottom: 16px;
+}
+
+.campo-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+  }
+
+  input,
+  select {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #dce6df;
+    border-radius: 10px;
+    background: #f8faf9;
+    color: #1f2937;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+    }
+  }
+}
+
+.accion-btn,
+.saldo-btn {
+  height: 46px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.accion-btn {
+  border: none;
+  background: #15803d;
+  color: #fff;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.saldo-btn {
+  border: 1px solid #15803d;
+  background: #fff;
+  color: #15803d;
+}
+
+.resumen-cuenta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f8faf9;
+    border: 1px solid #edf2ee;
+  }
+
+  span {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  strong {
+    color: #163d2b;
+    font-size: 16px;
+  }
+}
+
+/* El botón de cobrar ahora sí funciona: solo se apaga si está deshabilitado */
+.cobrar-btn {
+  opacity: 1;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
