@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Auth } from '../../../core/auth/auth';
 import { Carrito } from '../../../core/ventas/carrito';
+import { CuentaAbierta, Cuentas, PedidoACuenta } from '../../../core/ventas/cuentas';
 import { Pago, Ventas, VentaRegistrada } from '../../../core/ventas/ventas';
 
 type MetodoPago = 'efectivo' | 'transferencia' | 'mixto';
@@ -18,6 +19,7 @@ type CuentaTransferencia = 'nequi' | 'bancolombia';
 export class Venta {
   private readonly auth = inject(Auth);
   private readonly ventas = inject(Ventas);
+  private readonly cuentasSrv = inject(Cuentas);
   protected readonly carrito = inject(Carrito);
 
   // Datos del carrito real (los llena la pantalla Vender)
@@ -41,6 +43,25 @@ export class Venta {
   readonly cargando = signal(false);
   readonly errorServidor = signal<string | null>(null);
   readonly ventaRegistrada = signal<VentaRegistrada | null>(null);
+
+  // Cargar a cuenta abierta
+  readonly eligiendoCuenta = signal(false);
+  readonly cuentasLista = signal<CuentaAbierta[]>([]);
+  readonly busquedaCuenta = signal('');
+  readonly cuentaElegida = signal<CuentaAbierta | null>(null);
+  readonly pedidoCargado = signal<{ pedido: PedidoACuenta; cuenta: string } | null>(null);
+
+  readonly cuentasFiltradas = computed(() => {
+    const limpiar = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const texto = limpiar(this.busquedaCuenta().trim());
+    return this.cuentasLista().filter(c =>
+      limpiar(`${c.nombre_cuenta} ${c.encargado_nombre} ${c.encargado_celular}`).includes(texto)
+    );
+  });
+
+  readonly puedeCargar = computed(() =>
+    !this.carrito.vacio() && this.cuentaElegida() !== null && !this.cargando()
+  );
 
   // Cambio en efectivo
   cambio = computed(() =>
@@ -96,6 +117,44 @@ export class Venta {
         this.observaciones()
       );
       this.ventaRegistrada.set(venta);
+      this.limpiarFormulario();
+    } catch (e) {
+      this.errorServidor.set(e instanceof Error ? e.message : 'Ocurrió un error inesperado');
+    } finally {
+      this.cargando.set(false);
+    }
+  }
+
+  // Abre el selector y trae las cuentas abiertas
+  async abrirSelectorCuenta(): Promise<void> {
+    if (this.carrito.vacio()) return;
+    this.eligiendoCuenta.set(true);
+    this.cuentaElegida.set(null);
+    this.busquedaCuenta.set('');
+    this.errorServidor.set(null);
+    try {
+      this.cuentasLista.set(await this.cuentasSrv.buscar(''));
+    } catch (e) {
+      this.errorServidor.set(e instanceof Error ? e.message : 'No se pudieron cargar las cuentas');
+    }
+  }
+
+  cerrarSelectorCuenta(): void {
+    this.eligiendoCuenta.set(false);
+    this.cuentaElegida.set(null);
+  }
+
+  async cargarACuenta(): Promise<void> {
+    const cuenta = this.cuentaElegida();
+    if (!cuenta || !this.puedeCargar()) return;
+
+    this.cargando.set(true);
+    this.errorServidor.set(null);
+    try {
+      const pedido = await this.cuentasSrv.cargarCarrito(cuenta.cuenta_id, this.observaciones());
+      this.pedidoCargado.set({ pedido, cuenta: cuenta.nombre_cuenta });
+      this.eligiendoCuenta.set(false);
+      this.cuentaElegida.set(null);
       this.limpiarFormulario();
     } catch (e) {
       this.errorServidor.set(e instanceof Error ? e.message : 'Ocurrió un error inesperado');

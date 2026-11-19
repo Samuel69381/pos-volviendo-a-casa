@@ -28,6 +28,16 @@
     </div>
   }
 
+  <!-- PEDIDO CARGADO A CUENTA -->
+  @if (pedidoCargado(); as cargado) {
+    <div class="exito-box" role="status">
+      <strong>✓ Pedido #{{ cargado.pedido.numero_venta }} cargado a {{ cargado.cuenta }}</strong>
+      <span>Valor del pedido: {{ formatoPrecio(cargado.pedido.total_cop) }}</span>
+      <span>Saldo de la cuenta: {{ formatoPrecio(cargado.pedido.saldo_cuenta_cop) }}</span>
+      <a routerLink="/caja/ventas" class="exito-link">Nueva venta →</a>
+    </div>
+  }
+
   <div class="venta-layout">
 
     <!-- RESUMEN DE LA VENTA -->
@@ -387,13 +397,57 @@
         <button
           type="button"
           class="cuenta-btn"
-          disabled>
-          Cargar a cuenta
+          [disabled]="carrito.vacio() || cargando()"
+          (click)="eligiendoCuenta() ? cerrarSelectorCuenta() : abrirSelectorCuenta()">
+          {{ eligiendoCuenta() ? 'Cancelar' : 'Cargar a cuenta' }}
         </button>
+
+        <!-- SELECTOR DE CUENTA -->
+        @if (eligiendoCuenta()) {
+          <div class="selector-cuenta">
+
+            <input
+              type="search"
+              placeholder="Buscar equipo, encargado o celular..."
+              [value]="busquedaCuenta()"
+              (input)="busquedaCuenta.set($any($event.target).value)"
+            />
+
+            <div class="selector-lista">
+              @for (c of cuentasFiltradas(); track c.cuenta_id) {
+                <button
+                  type="button"
+                  class="selector-item"
+                  [class.selected]="cuentaElegida()?.cuenta_id === c.cuenta_id"
+                  (click)="cuentaElegida.set(c)">
+                  <span>
+                    <strong>{{ c.nombre_cuenta }}</strong>
+                    <small>{{ c.encargado_nombre }} · {{ c.encargado_celular }}</small>
+                  </span>
+                  <span class="selector-saldo">{{ formatoPrecio(c.saldo_cop) }}</span>
+                </button>
+              } @empty {
+                <p class="selector-vacio">
+                  No hay cuentas abiertas con ese nombre.
+                  <a routerLink="/caja/cuentas">Abrir una cuenta →</a>
+                </p>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="confirmar-btn"
+              [disabled]="!puedeCargar()"
+              (click)="cargarACuenta()">
+              {{ cargando() ? 'Cargando…' : cuentaElegida() ? 'Cargar ' + formatoPrecio(total()) + ' a ' + cuentaElegida()!.nombre_cuenta : 'Elige una cuenta' }}
+            </button>
+
+          </div>
+        }
 
         <p class="acciones-nota">
           @if (puedeCobrar()) {
-            "Cargar a cuenta" se habilitará con el módulo de Cuentas abiertas.
+            Para fiar el pedido, usa "Cargar a cuenta"; se cobra después desde Cuentas abiertas.
           } @else {
             Como mesero no cobras: carga el pedido a la cuenta del equipo.
           }
