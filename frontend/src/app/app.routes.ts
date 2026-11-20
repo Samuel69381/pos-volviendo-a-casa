@@ -26,7 +26,7 @@ export const routes: Routes = [
         .then(m => m.CambiarClave)
   },
 
-  // INICIO: por ahora lleva a la caja (luego será el panel principal)
+  // INICIO: por ahora lleva a la caja
   {
     path: 'inicio',
     redirectTo: 'caja',
@@ -51,6 +51,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/caja/apertura-caja/apertura-caja')
             .then(m => m.AperturaCaja)
+      },
+      {
+        path: 'ventas',
+        loadComponent: () =>
+          import('./features/ventas/vender/vender')
+            .then(m => m.Vender)
+      },
+      {
+        path: 'venta',
+        loadComponent: () =>
+          import('./features/ventas/venta/venta')
+            .then(m => m.Venta)
+      },
+      {
+        path: 'cuentas',
+        loadComponent: () =>
+          import('./features/cuentas/cuentas-abiertas/cuentas-abiertas')
+            .then(m => m.CuentasAbiertas)
       }
     ]
   },
@@ -62,10 +80,15 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // RUTA NO ENCONTRADA
+  // RUTA NO ENCONTRADA (siempre al final)
   {
     path: '**',
     redirectTo: 'caja'
+  },
+  {
+  path: 'productos',
+  loadComponent: () =>
+    import('./features/productos/productos/productos')
+      .then(m => m.Productos)
   }
-
 ];

@@ -1,0 +1,462 @@
+<div class="venta-page">
+
+  <!-- ENCABEZADO -->
+  <div class="venta-header">
+
+    <div>
+      <span class="eyebrow">PUNTO DE VENTA</span>
+      <h1>Finalizar venta</h1>
+      <p>
+        Revisa los productos y selecciona
+        el método de pago.
+      </p>
+    </div>
+
+    <span class="turno-badge">
+      <span class="status-dot activo"></span>
+      En turno · {{ empleado() }}
+    </span>
+
+  </div>
+
+  <!-- VENTA REGISTRADA -->
+  @if (ventaRegistrada(); as venta) {
+    <div class="exito-box" role="status">
+      <strong>✓ Venta #{{ venta.numero_venta }} registrada</strong>
+      <span>Total cobrado: {{ formatoPrecio(venta.total_cop) }}</span>
+      <a routerLink="/caja/ventas" class="exito-link">Nueva venta →</a>
+    </div>
+  }
+
+  <!-- PEDIDO CARGADO A CUENTA -->
+  @if (pedidoCargado(); as cargado) {
+    <div class="exito-box" role="status">
+      <strong>✓ Pedido #{{ cargado.pedido.numero_venta }} cargado a {{ cargado.cuenta }}</strong>
+      <span>Valor del pedido: {{ formatoPrecio(cargado.pedido.total_cop) }}</span>
+      <span>Saldo de la cuenta: {{ formatoPrecio(cargado.pedido.saldo_cuenta_cop) }}</span>
+      <a routerLink="/caja/ventas" class="exito-link">Nueva venta →</a>
+    </div>
+  }
+
+  <div class="venta-layout">
+
+    <!-- RESUMEN DE LA VENTA -->
+    <section class="resumen-panel">
+
+      <div class="panel-title">
+
+        <div>
+          <h2>Resumen de la venta</h2>
+          <p>Productos seleccionados</p>
+        </div>
+
+        <span class="cantidad-badge">
+          {{ cantidadProductos() }} unidades
+        </span>
+
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div class="productos-lista">
+
+        @for (item of productos(); track item.producto.id) {
+
+          <div class="producto-fila">
+
+            <div class="producto-cantidad">
+              {{ item.cantidad }}×
+            </div>
+
+            <div class="producto-descripcion">
+
+              <strong>
+                {{ item.producto.nombre }}
+              </strong>
+
+              <span>
+                {{ formatoPrecio(item.producto.precio_cop) }} c/u
+              </span>
+
+            </div>
+
+            <strong class="producto-subtotal">
+              {{
+                formatoPrecio(
+                  item.producto.precio_cop * item.cantidad
+                )
+              }}
+            </strong>
+
+          </div>
+
+        } @empty {
+
+          <!-- CARRITO VACÍO -->
+          <div class="carrito-vacio">
+            <span class="carrito-vacio-icono">🛒</span>
+            <strong>No hay productos</strong>
+            <p>Agrega productos desde la pantalla de venta.</p>
+            <a routerLink="/caja/ventas" class="volver-btn">← Volver a vender</a>
+          </div>
+
+        }
+
+      </div>
+
+      <!-- TOTAL -->
+      <div class="total-section">
+
+        <div class="total-linea">
+          <span>Unidades</span>
+          <strong>{{ cantidadProductos() }}</strong>
+        </div>
+
+        <div class="total-principal">
+          <span>Total a pagar</span>
+          <strong>{{ formatoPrecio(total()) }}</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- DATOS Y PAGO -->
+    <section class="pago-panel">
+
+      <div class="panel-title">
+        <div>
+          <h2>Datos de la venta</h2>
+          <p>Información del cliente y pago</p>
+        </div>
+      </div>
+
+      <!-- CLIENTE -->
+      <div class="campo">
+
+        <label for="cliente">Cliente (opcional)</label>
+
+        <input
+          id="cliente"
+          type="text"
+          [ngModel]="cliente()"
+          (ngModelChange)="cliente.set($event)"
+          placeholder="Consumidor final"
+        />
+
+      </div>
+
+      <!-- OBSERVACIONES -->
+      <div class="campo">
+
+        <label for="observaciones">
+          Observaciones (opcional)
+        </label>
+
+        <textarea
+          id="observaciones"
+          rows="2"
+          [ngModel]="observaciones()"
+          (ngModelChange)="observaciones.set($event)"
+          placeholder="Agregar una nota..."
+        ></textarea>
+
+      </div>
+
+      <!-- MÉTODOS DE PAGO -->
+      <div class="metodos-section">
+
+        <h3>Método de pago</h3>
+
+        <div class="metodos-grid">
+
+          <button
+            type="button"
+            class="metodo-btn"
+            [class.selected]="metodoPago() === 'efectivo'"
+            [attr.aria-pressed]="metodoPago() === 'efectivo'"
+            (click)="seleccionarMetodo('efectivo')">
+
+            <span class="metodo-icono">💵</span>
+            <strong>Efectivo</strong>
+
+          </button>
+
+          <button
+            type="button"
+            class="metodo-btn"
+            [class.selected]="metodoPago() === 'transferencia'"
+            [attr.aria-pressed]="metodoPago() === 'transferencia'"
+            (click)="seleccionarMetodo('transferencia')">
+
+            <span class="metodo-icono">📱</span>
+            <strong>Transferencia</strong>
+
+          </button>
+
+          <button
+            type="button"
+            class="metodo-btn"
+            [class.selected]="metodoPago() === 'mixto'"
+            [attr.aria-pressed]="metodoPago() === 'mixto'"
+            (click)="seleccionarMetodo('mixto')">
+
+            <span class="metodo-icono">💳</span>
+            <strong>Mixto</strong>
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- PAGO EN EFECTIVO -->
+      @if (metodoPago() === 'efectivo') {
+
+        <div class="detalle-pago">
+
+          <div class="campo">
+
+            <label for="recibido">
+              Dinero recibido
+            </label>
+
+            <div class="input-moneda">
+
+              <span>$</span>
+
+              <input
+                id="recibido"
+                type="number"
+                min="0"
+                placeholder="Ej. 50000"
+                [ngModel]="dineroRecibido()"
+                (ngModelChange)="dineroRecibido.set($event)"
+              />
+
+            </div>
+
+          </div>
+
+          <div class="cambio-box">
+
+            <span>Cambio a devolver</span>
+
+            <strong>
+              {{ formatoPrecio(cambio()) }}
+            </strong>
+
+          </div>
+
+          @if (dineroRecibido() !== null && faltante() > 0) {
+
+            <p class="mensaje-error">
+              Faltan {{ formatoPrecio(faltante()) }}
+              para completar el pago.
+            </p>
+
+          }
+
+        </div>
+
+      }
+
+      <!-- CUENTA DE LA TRANSFERENCIA (transferencia y mixto) -->
+      @if (metodoPago() !== 'efectivo') {
+
+        <div class="cuenta-transferencia">
+
+          <span>¿A qué cuenta llegó?</span>
+
+          <div class="cuenta-opciones">
+            <button
+              type="button"
+              class="cuenta-opcion"
+              [class.selected]="cuentaTransferencia() === 'nequi'"
+              [attr.aria-pressed]="cuentaTransferencia() === 'nequi'"
+              (click)="seleccionarCuenta('nequi')">
+              Nequi
+            </button>
+
+            <button
+              type="button"
+              class="cuenta-opcion"
+              [class.selected]="cuentaTransferencia() === 'bancolombia'"
+              [attr.aria-pressed]="cuentaTransferencia() === 'bancolombia'"
+              (click)="seleccionarCuenta('bancolombia')">
+              Bancolombia
+            </button>
+          </div>
+
+        </div>
+
+      }
+
+      <!-- TRANSFERENCIA -->
+      @if (metodoPago() === 'transferencia') {
+
+        <div class="detalle-pago">
+
+          <div class="transferencia-box">
+
+            <span>Valor de la transferencia</span>
+
+            <strong>
+              {{ formatoPrecio(total()) }}
+            </strong>
+
+            <p>
+              Verifica que el comprobante diga
+              {{ cuentaTransferencia() === 'nequi' ? 'Nequi' : 'Bancolombia' }}
+              y este mismo valor.
+            </p>
+
+          </div>
+
+        </div>
+
+      }
+
+      <!-- PAGO MIXTO -->
+      @if (metodoPago() === 'mixto') {
+
+        <div class="detalle-pago">
+
+          <div class="campo">
+
+            <label for="efectivoMixto">
+              Valor pagado en efectivo
+            </label>
+
+            <div class="input-moneda">
+
+              <span>$</span>
+
+              <input
+                id="efectivoMixto"
+                type="number"
+                min="0"
+                [max]="total()"
+                placeholder="Ej. 10000"
+                [ngModel]="efectivoMixto()"
+                (ngModelChange)="efectivoMixto.set($event)"
+              />
+
+            </div>
+
+          </div>
+
+          <div class="mixto-resumen">
+
+            <div>
+              <span>Efectivo</span>
+              <strong>
+                {{ formatoPrecio(efectivoMixto() ?? 0) }}
+              </strong>
+            </div>
+
+            <div>
+              <span>{{ cuentaTransferencia() === 'nequi' ? 'Nequi' : 'Bancolombia' }}</span>
+              <strong>
+                {{ formatoPrecio(transferenciaMixta()) }}
+              </strong>
+            </div>
+
+          </div>
+
+          @if ((efectivoMixto() ?? 0) > total()) {
+
+            <p class="mensaje-error">
+              El efectivo no puede superar
+              el total de la venta.
+            </p>
+
+          }
+
+        </div>
+
+      }
+
+      <!-- ERROR DEL SERVIDOR -->
+      @if (errorServidor()) {
+        <div class="server-error" role="alert">{{ errorServidor() }}</div>
+      }
+
+      <!-- BOTONES -->
+      <div class="acciones-venta">
+
+        @if (puedeCobrar()) {
+          <button
+            type="button"
+            class="confirmar-btn"
+            [disabled]="!puedeConfirmar()"
+            (click)="confirmarVenta()">
+            {{ cargando() ? 'Registrando…' : '✓ Confirmar venta' }}
+          </button>
+        }
+
+        <button
+          type="button"
+          class="cuenta-btn"
+          [disabled]="carrito.vacio() || cargando()"
+          (click)="eligiendoCuenta() ? cerrarSelectorCuenta() : abrirSelectorCuenta()">
+          {{ eligiendoCuenta() ? 'Cancelar' : 'Cargar a cuenta' }}
+        </button>
+
+        <!-- SELECTOR DE CUENTA -->
+        @if (eligiendoCuenta()) {
+          <div class="selector-cuenta">
+
+            <input
+              type="search"
+              placeholder="Buscar equipo, encargado o celular..."
+              [value]="busquedaCuenta()"
+              (input)="busquedaCuenta.set($any($event.target).value)"
+            />
+
+            <div class="selector-lista">
+              @for (c of cuentasFiltradas(); track c.cuenta_id) {
+                <button
+                  type="button"
+                  class="selector-item"
+                  [class.selected]="cuentaElegida()?.cuenta_id === c.cuenta_id"
+                  (click)="cuentaElegida.set(c)">
+                  <span>
+                    <strong>{{ c.nombre_cuenta }}</strong>
+                    <small>{{ c.encargado_nombre }} · {{ c.encargado_celular }}</small>
+                  </span>
+                  <span class="selector-saldo">{{ formatoPrecio(c.saldo_cop) }}</span>
+                </button>
+              } @empty {
+                <p class="selector-vacio">
+                  No hay cuentas abiertas con ese nombre.
+                  <a routerLink="/caja/cuentas">Abrir una cuenta →</a>
+                </p>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="confirmar-btn"
+              [disabled]="!puedeCargar()"
+              (click)="cargarACuenta()">
+              {{ cargando() ? 'Cargando…' : cuentaElegida() ? 'Cargar ' + formatoPrecio(total()) + ' a ' + cuentaElegida()!.nombre_cuenta : 'Elige una cuenta' }}
+            </button>
+
+          </div>
+        }
+
+        <p class="acciones-nota">
+          @if (puedeCobrar()) {
+            Para fiar el pedido, usa "Cargar a cuenta"; se cobra después desde Cuentas abiertas.
+          } @else {
+            Como mesero no cobras: carga el pedido a la cuenta del equipo.
+          }
+        </p>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

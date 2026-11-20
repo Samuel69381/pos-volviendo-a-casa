@@ -1,0 +1,330 @@
+<div class="productos-page">
+
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">ADMINISTRACIÓN</span>
+      <h1>Productos</h1>
+      <p>Gestiona los productos de la cafetería.</p>
+    </div>
+
+    <button
+      type="button"
+      class="nuevo-btn"
+      (click)="nuevoProducto()">
+      <span>＋</span> Nuevo producto
+    </button>
+  </header>
+
+  <!-- MENSAJES -->
+  @if (mensaje()) {
+    <div class="aviso aviso-exito" role="status">✓ {{ mensaje() }}</div>
+  }
+  @if (error() && !mostrarFormulario()) {
+    <div class="aviso aviso-error" role="alert">{{ error() }}</div>
+  }
+  @if (!esAdmin()) {
+    <div class="aviso aviso-info">
+      Puedes crear productos nuevos. Para cambiar precios o desactivar, pídele al administrador.
+    </div>
+  }
+
+  <!-- ESTADÍSTICAS -->
+  <div class="estadisticas">
+    <div class="stat-card">
+      <span>Total de productos</span>
+      <strong>{{ totalProductos() }}</strong>
+      <small>Registrados en el catálogo</small>
+    </div>
+
+    <div class="stat-card">
+      <span>Productos disponibles</span>
+      <strong class="verde">
+        {{ productosDisponibles() }}
+      </strong>
+      <small>Activos y con existencias</small>
+    </div>
+
+    <div class="stat-card">
+      <span>Productos con stock bajo</span>
+      <strong class="naranja">
+        {{ productosStockBajo() }}
+      </strong>
+      <small>Incluye productos agotados</small>
+    </div>
+  </div>
+
+  <!-- LISTADO -->
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <h2>Catálogo de productos</h2>
+        <p>Consulta y administra tus artículos.</p>
+      </div>
+
+      <span class="contador">
+        {{ productosFiltrados().length }} productos
+      </span>
+    </div>
+
+    <div class="filtros">
+      <div class="buscador">
+        <span>⌕</span>
+        <input
+          type="search"
+          placeholder="Buscar por nombre o categoría..."
+          [ngModel]="busqueda()"
+          (ngModelChange)="busqueda.set($event)"
+        />
+      </div>
+
+      <select
+        aria-label="Filtrar por categoría"
+        [ngModel]="categoriaFiltro()"
+        (ngModelChange)="categoriaFiltro.set($event)">
+        @for (categoria of categorias; track categoria) {
+          <option [value]="categoria">
+            {{ categoria }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Existencias</th>
+            <th>Estado</th>
+            <th>Publicación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (cargando()) {
+            <tr>
+              <td colspan="7" class="sin-resultados">Cargando productos…</td>
+            </tr>
+          }
+
+          @for (producto of productosFiltrados(); track producto.id) {
+            <tr>
+              <td>
+                <div class="producto-nombre">
+                  <span class="producto-icono">📦</span>
+                  <strong>{{ producto.nombre }}</strong>
+                </div>
+              </td>
+
+              <td>{{ producto.categoria }}</td>
+
+              <td class="precio">
+                {{ formatoPrecio(producto.precio) }}
+              </td>
+
+              <td>{{ producto.controlaStock ? producto.stock + ' und.' : '—' }}</td>
+
+              <td>
+                <span
+                  class="stock-badge"
+                  [class.bajo]="producto.controlaStock && producto.stock > 0 && producto.stock <= producto.stockMinimo"
+                  [class.agotado]="producto.controlaStock && producto.stock === 0"
+                  [class.sin-control]="!producto.controlaStock">
+                  {{ estadoStock(producto) }}
+                </span>
+              </td>
+
+              <td>
+                <span
+                  class="publicacion"
+                  [class.inactivo]="!producto.activo">
+                  {{ producto.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+
+              <td>
+                @if (esAdmin()) {
+                <div class="acciones">
+                  <button
+                    type="button"
+                    class="editar-btn"
+                    (click)="editarProducto(producto)">
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="estado-btn"
+                    (click)="cambiarEstado(producto)">
+                    {{ producto.activo ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </div>
+                } @else {
+                  <span class="sin-permiso">—</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            @if (!cargando()) {
+            <tr>
+              <td colspan="7" class="sin-resultados">
+                No se encontraron productos.
+              </td>
+            </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- MODAL NUEVO / EDITAR PRODUCTO -->
+  @if (mostrarFormulario()) {
+    <div class="modal-overlay" (click)="cerrarFormulario()">
+      <section
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-titulo"
+        (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+          <div>
+            <h2 id="modal-titulo">
+              {{ editandoId() === null ? 'Nuevo producto' : 'Editar producto' }}
+            </h2>
+            <p>Completa la información del artículo.</p>
+          </div>
+
+          <button
+            type="button"
+            class="cerrar-modal"
+            aria-label="Cerrar formulario"
+            (click)="cerrarFormulario()">
+            ×
+          </button>
+        </div>
+
+        <form
+          class="producto-form"
+          #productoForm="ngForm"
+          (ngSubmit)="guardarProducto()">
+
+          <div class="campo">
+            <label for="nombre">Nombre del producto</label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              required
+              [(ngModel)]="formulario.nombre"
+              placeholder="Ej. Gaseosa personal"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="categoria">Categoría</label>
+            <select
+              id="categoria"
+              name="categoria"
+              [(ngModel)]="formulario.categoria">
+              @for (categoria of categorias; track categoria) {
+                @if (categoria !== 'Todas') {
+                  <option [value]="categoria">
+                    {{ categoria }}
+                  </option>
+                }
+              }
+            </select>
+          </div>
+
+          <div class="form-grid">
+            <div class="campo">
+              <label for="precio">Precio de venta</label>
+              <input
+                id="precio"
+                name="precio"
+                type="number"
+                min="1"
+                required
+                [(ngModel)]="formulario.precio"
+              />
+            </div>
+
+            <div class="campo">
+              <label for="stock">Existencias</label>
+              <input
+                id="stock"
+                name="stock"
+                type="number"
+                [value]="formulario.stock"
+                disabled
+              />
+              <small class="ayuda">Se suman en Compras.</small>
+            </div>
+          </div>
+
+          <label class="checkbox-campo">
+            <input
+              type="checkbox"
+              name="controlaStock"
+              [(ngModel)]="formulario.controlaStock"
+            />
+            Controla stock (desmárcalo para servicios, como el alquiler de cancha)
+          </label>
+
+          @if (formulario.controlaStock) {
+          <div class="campo">
+            <label for="stockMinimo">Stock mínimo</label>
+            <input
+              id="stockMinimo"
+              name="stockMinimo"
+              type="number"
+              min="0"
+              step="1"
+              required
+              [(ngModel)]="formulario.stockMinimo"
+            />
+          </div>
+          }
+
+          @if (editandoId() !== null) {
+          <label class="checkbox-campo">
+            <input
+              type="checkbox"
+              name="activo"
+              [(ngModel)]="formulario.activo"
+            />
+            Producto activo para la venta
+          </label>
+          }
+
+          @if (error()) {
+            <div class="aviso aviso-error" role="alert">{{ error() }}</div>
+          }
+
+          <div class="modal-acciones">
+            <button
+              type="button"
+              class="cancelar-btn"
+              (click)="cerrarFormulario()">
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="guardar-btn"
+              [disabled]="productoForm.invalid || guardando()">
+              {{ guardando() ? 'Guardando…' : (editandoId() === null ? 'Crear producto' : 'Guardar cambios') }}
+            </button>
+          </div>
+
+        </form>
+      </section>
+    </div>
+  }
+
+</div>

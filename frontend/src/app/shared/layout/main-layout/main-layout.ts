@@ -24,6 +24,10 @@ export class MainLayout {
     return rol ? NOMBRES_ROL[rol] : '';
   });
 
+  // Qué opciones del menú ve cada rol
+  readonly esAdmin = computed(() => this.auth.perfil()?.rol === 'admin');
+  readonly esMesero = computed(() => this.auth.perfil()?.rol === 'mesero');
+
   alternarMenu(): void {
     this.menuAbierto.update(valor => !valor);
   }
