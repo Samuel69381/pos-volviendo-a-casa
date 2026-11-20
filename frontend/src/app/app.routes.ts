@@ -84,5 +84,11 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'caja'
+  },
+  {
+  path: 'productos',
+  loadComponent: () =>
+    import('./features/productos/productos/productos')
+      .then(m => m.Productos)
   }
 ];
