@@ -1,4 +1,3 @@
-
 <div class="vender-page">
 
   <header class="vender-header">
@@ -13,7 +12,7 @@
 
     <span class="estado-badge">
       <span class="estado-punto"></span>
-      Nueva venta
+      En turno · {{ empleado() }}
     </span>
   </header>
 
@@ -29,16 +28,99 @@
         </div>
       </div>
 
-      <!-- Aquí incorporaremos el componente
-           de catálogo que ya tienes desarrollado -->
-      <div class="modulo-placeholder">
-        <span class="placeholder-icon">📦</span>
-        <h3>Catálogo de productos</h3>
-        <p>
-          Aquí se mostrará tu componente de catálogo,
-          con sus productos, buscador y categorías.
-        </p>
+      <!-- BUSCADOR -->
+      <input
+        class="buscador"
+        type="search"
+        placeholder="Buscar producto..."
+        aria-label="Buscar producto"
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+      />
+
+      <!-- CATEGORÍAS -->
+      <div class="categorias" role="group" aria-label="Categorías">
+        <button
+          type="button"
+          class="chip"
+          [class.activo]="categoriaActiva() === null"
+          [attr.aria-pressed]="categoriaActiva() === null"
+          (click)="seleccionarCategoria(null)">
+          Todas
+        </button>
+
+        @for (categoria of catalogo.categorias(); track categoria.id) {
+          <button
+            type="button"
+            class="chip"
+            [class.activo]="categoriaActiva() === categoria.id"
+            [attr.aria-pressed]="categoriaActiva() === categoria.id"
+            (click)="seleccionarCategoria(categoria.id)">
+            {{ categoria.nombre }}
+          </button>
+        }
       </div>
+
+      <!-- PRODUCTOS -->
+      @if (cargando()) {
+
+        <div class="modulo-placeholder">
+          <span class="placeholder-icon">⏳</span>
+          <h3>Cargando productos…</h3>
+        </div>
+
+      } @else if (error()) {
+
+        <div class="modulo-placeholder">
+          <span class="placeholder-icon">⚠️</span>
+          <h3>{{ error() }}</h3>
+          <button type="button" class="reintentar-btn" (click)="cargarCatalogo()">
+            Reintentar
+          </button>
+        </div>
+
+      } @else {
+
+        <div class="productos-grid">
+          @for (producto of productosVisibles(); track producto.id) {
+
+            <button
+              type="button"
+              class="producto-card"
+              [class.agotado]="!catalogo.disponible(producto)"
+              [class.en-carrito]="carrito.cantidadDe(producto.id) > 0"
+              [disabled]="!catalogo.disponible(producto) || enElLimite(producto)"
+              (click)="agregar(producto)">
+
+              @if (carrito.cantidadDe(producto.id) > 0) {
+                <span class="card-cantidad">{{ carrito.cantidadDe(producto.id) }}</span>
+              }
+
+              <strong class="card-nombre">{{ producto.nombre }}</strong>
+              <span class="card-precio">{{ formatoPrecio(producto.precio_cop) }}</span>
+
+              @if (!catalogo.disponible(producto)) {
+                <span class="card-etiqueta etiqueta-agotado">Agotado</span>
+              } @else if (stockBajo(producto)) {
+                <span class="card-etiqueta etiqueta-bajo">Quedan {{ producto.stock }}</span>
+              } @else if (producto.controla_stock) {
+                <span class="card-stock">Stock: {{ producto.stock }}</span>
+              }
+
+            </button>
+
+          } @empty {
+
+            <div class="modulo-placeholder">
+              <span class="placeholder-icon">📦</span>
+              <h3>No hay productos</h3>
+              <p>Prueba con otra categoría o búsqueda.</p>
+            </div>
+
+          }
+        </div>
+
+      }
 
     </section>
 
@@ -48,29 +130,77 @@
       <div class="panel-header">
         <div>
           <h2>Carrito de compra</h2>
-          <p>Productos seleccionados</p>
+          <p>{{ carrito.unidades() }} productos seleccionados</p>
         </div>
         <span class="carrito-icon">🛒</span>
       </div>
 
-      <!-- Aquí incorporaremos el componente
-           de carrito que ya tienes desarrollado -->
-      <div class="modulo-placeholder">
-        <span class="placeholder-icon">🛒</span>
-        <h3>Carrito</h3>
-        <p>
-          Aquí aparecerán los artículos que
-          agregue el cajero.
-        </p>
-      </div>
+      @if (carrito.vacio()) {
+
+        <div class="modulo-placeholder">
+          <span class="placeholder-icon">🛒</span>
+          <h3>El carrito está vacío</h3>
+          <p>Toca un producto para agregarlo.</p>
+        </div>
+
+      } @else {
+
+        <ul class="carrito-lista">
+          @for (item of carrito.items(); track item.producto.id) {
+            <li class="carrito-item">
+
+              <div class="item-info">
+                <strong>{{ item.producto.nombre }}</strong>
+                <span>{{ formatoPrecio(item.producto.precio_cop * item.cantidad) }}</span>
+              </div>
+
+              <div class="item-controles">
+                <button
+                  type="button"
+                  class="cantidad-btn"
+                  [attr.aria-label]="'Quitar una ' + item.producto.nombre"
+                  (click)="carrito.restar(item.producto)">
+                  −
+                </button>
+
+                <span class="item-cantidad">{{ item.cantidad }}</span>
+
+                <button
+                  type="button"
+                  class="cantidad-btn"
+                  [attr.aria-label]="'Agregar una ' + item.producto.nombre"
+                  [disabled]="enElLimite(item.producto)"
+                  (click)="carrito.agregar(item.producto)">
+                  +
+                </button>
+              </div>
+
+            </li>
+          }
+        </ul>
+
+        <div class="carrito-total">
+          <span>Total</span>
+          <strong>{{ formatoPrecio(carrito.total()) }}</strong>
+        </div>
+
+        <button type="button" class="vaciar-btn" (click)="carrito.vaciar()">
+          Vaciar carrito
+        </button>
+
+      }
 
       <div class="carrito-acciones">
-        <a
-          routerLink="/caja/venta"
-          class="continuar-btn">
-          Continuar a venta
-          <span>→</span>
-        </a>
+        @if (carrito.vacio()) {
+          <span class="continuar-btn deshabilitado" aria-disabled="true">
+            Continuar a venta <span>→</span>
+          </span>
+        } @else {
+          <a routerLink="/caja/venta" class="continuar-btn">
+            Continuar a venta
+            <span>→</span>
+          </a>
+        }
       </div>
 
     </aside>
